@@ -54,4 +54,30 @@ public class Quicksort {
         generateRuntimeStatistics(statFileName, bufferPool);
         
     }
+
+    private static void generateRuntimeStatistics(
+        String statFileName,
+        BufferPool bufferPool) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    private static void writeSortedDataToFile(
+        String dataFileName,
+        BufferPool bufferPool) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    private static void quickSort(BufferPool bufferPool) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    private static void readDataIntoBuffers(
+        String dataFileName,
+        BufferPool bufferPool) {
+        // TODO Auto-generated method stub
+        
+    }
 }
