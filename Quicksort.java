@@ -2,7 +2,7 @@
  * {Project Description Here}
  */
 
-
+import java.util.List;
 
 /**
  * The class containing the main method.
@@ -70,8 +70,44 @@ public class Quicksort {
     }
 
     private static void quickSort(BufferPool bufferPool) {
-        // TODO Auto-generated method stub
+        Buffer buffer = null;
+        try {
+            buffer = bufferPool.getBuffer();
+        } catch (IllegalStateException e) {
+            System.err.println("Error: Buffer pool is empty.");
+        }
         
+        List<Record> records = buffer.getRecords();
+        quickSort(records, 0, records.size() - 1);
+        buffer.setRecords(records);
+        bufferPool.releaseBuffer(buffer);
+    }
+    
+    private static void quickSort(List<Record> records, int low, int high) {
+        if (low < high) {
+            int partitionIndex = partition(records, low, high);
+            quickSort(records, low, partitionIndex - 1);
+            quickSort(records, partitionIndex + 1, high);
+        }
+    }
+    
+    private static int partition(List<Record> records, int low, int high) {
+        Record pivot = records.get(high);
+        int i = low - 1;
+        for (int j = low; j < high; j++) {
+            if (records.get(j).getKey() < pivot.getKey()) {
+                i++;
+                swap(records, i, j);
+            }
+        }
+        swap(records, i + 1, high);
+        return i + 1;
+    }
+    
+    private static void swap(List<Record> records, int i, int j) {
+        Record temp = records.get(i);
+        records.set(i, records.get(j));
+        records.set(j, temp);
     }
 
     private static void readDataIntoBuffers(

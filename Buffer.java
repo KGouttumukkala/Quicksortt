@@ -1,4 +1,5 @@
 import java.io.*;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
 
 public class Buffer {
@@ -49,6 +50,16 @@ public class Buffer {
     }
     
     public void reset() {
+        
+    }
+
+    public List<Record> getRecords() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    public void setRecords(List<Record> records) {
+        // TODO Auto-generated method stub
         
     }
 }
