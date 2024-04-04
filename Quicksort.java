@@ -2,15 +2,8 @@
  * {Project Description Here}
  */
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.List;
+import java.io.*;
 
 /**
  * The class containing the main method.
@@ -67,16 +60,22 @@ public class Quicksort {
         long endTime = System.currentTimeMillis();
         long runtime = endTime - startTime;
         writeSortedDataToFile(dataFileName, bufferPool);
-        generateRuntimeStatistics(statFileName, bufferPool, runtime);
+        generateRuntimeStatistics(dataFileName, statFileName, bufferPool, runtime);
         
     }
 
-    private static void generateRuntimeStatistics(
-        String statFileName,
-        BufferPool bufferPool, long runtime) {
-        // TODO Auto-generated method stub
-        
+    private static void generateRuntimeStatistics(String dataFileName, String statFileName, BufferPool bufferPool, long runtime) {
+        try (PrintWriter writer = new PrintWriter(new FileWriter(statFileName))) {
+            writer.println(dataFileName);
+            writer.println("Cache Hits: " + bufferPool.getCacheHits());
+            writer.println("Disk Reads: " + bufferPool.getDiskReads());
+            writer.println("Disk Writes: " + bufferPool.getDiskWrites());
+            writer.println("Runtime: " + runtime + " ms");
+        } catch (IOException e) {
+            System.err.println("Error writing statistics to file: " + e.getMessage());
+        }
     }
+
 
     private static void writeSortedDataToFile(String dataFileName, BufferPool bufferPool) {
         List<KVPair<Integer, Integer>> sortedPairs = bufferPool.getAllSortedPairs();
@@ -152,9 +151,5 @@ public class Quicksort {
         } catch (IOException e) {
             System.err.println("Error reading data from file: " + e.getMessage());
         }
-    }
-
-    
-    private static void writeStatisticsToFile(String fileName, int cacheHits, int diskReads, int diskWrites, long runtime) {
     }
 }

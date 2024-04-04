@@ -1,4 +1,5 @@
 import java.io.*;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -50,15 +51,40 @@ public class Buffer {
     }
     
     public void reset() {
-        
+        data = new byte[bufferSize];
+        isDirty = false;
     }
 
+
+    @SuppressWarnings("unchecked")
     public List<KVPair<Integer, Integer>> getPairs() {
-        // TODO Auto-generated method stub
-        return null;
+        List<KVPair<Integer, Integer>> pairsList = new ArrayList<>();
+        try (ByteArrayInputStream bis = new ByteArrayInputStream(data);
+             ObjectInputStream ois = new ObjectInputStream(bis)) {
+            while (bis.available() > 0) {
+                pairsList.add((KVPair<Integer, Integer>) ois.readObject());
+            }
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        return pairsList;
     }
 
     public void setPairs(List<KVPair<Integer, Integer>> pairs) {
+        try (ByteArrayOutputStream bos = new ByteArrayOutputStream();
+             ObjectOutputStream oos = new ObjectOutputStream(bos)) {
+            for (KVPair<Integer, Integer> pair : pairs) {
+                oos.writeObject(pair);
+            }
+            oos.flush();
+            data = bos.toByteArray();
+            isDirty = true;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void addKeyValue(short key, short value) {
         // TODO Auto-generated method stub
         
     }

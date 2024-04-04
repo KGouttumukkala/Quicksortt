@@ -47,18 +47,35 @@ public class BufferPool {
 
 
     public void addKeyValue(short key, short value) {
-        // TODO Auto-generated method stub
-        
+        Buffer leastRecentlyUsed = getBuffer();
+        leastRecentlyUsed.addKeyValue(key, value);
     }
 
 
     public int getCapacity() {
-        // TODO Auto-generated method stub
-        return 0;
+        return capacity;
     }
 
 
     public List<KVPair<Integer, Integer>> getAllSortedPairs() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+
+    public String getCacheHits() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+
+    public String getDiskReads() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+
+    public String getDiskWrites() {
         // TODO Auto-generated method stub
         return null;
     }
