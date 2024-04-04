@@ -85,7 +85,26 @@ public class Buffer {
     }
 
     public void addKeyValue(short key, short value) {
-        // TODO Auto-generated method stub
-        
+        // Calculate the index in the data array to store the key
+        int keyIndex = calculateKeyIndex();
+
+        // Store the key and value in the data array
+        data[keyIndex] = (byte) (key & 0xFF);
+        data[keyIndex + 1] = (byte) ((key >> 8) & 0xFF);
+        data[keyIndex + 2] = (byte) (value & 0xFF);
+        data[keyIndex + 3] = (byte) ((value >> 8) & 0xFF);
+
+        isDirty = true;
+    }
+
+    private int calculateKeyIndex() {
+        int index = calculateIndex() * 4;
+        return index;
+    }
+
+    private int calculateIndex() {
+        int pairsPerBuffer = bufferSize / 4;
+        int currentIndex = (int) (System.currentTimeMillis() % pairsPerBuffer);
+        return currentIndex;
     }
 }

@@ -1,13 +1,20 @@
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class BufferPool {
     private List<Buffer> buffers;
     private int capacity;
+    private int cacheHits;
+    private int diskReads;
+    private int diskWrites;
 
     public BufferPool(int cap) {
         capacity = cap;
         buffers = new ArrayList<>(capacity);
+        cacheHits = 0;
+        diskReads = 0;
+        diskWrites = 0;
         initializeBuffers();
     }
 
@@ -29,6 +36,11 @@ public class BufferPool {
             if (buffer.getLastUsedTime() < leastRecentlyUsed.getLastUsedTime()) {
                 leastRecentlyUsed = buffer;
             }
+        }
+        if (leastRecentlyUsed.isDirty()) {
+            diskWrites++;
+        } else {
+            cacheHits++;
         }
         
         leastRecentlyUsed.setLastUsedTime(System.currentTimeMillis());
@@ -58,25 +70,29 @@ public class BufferPool {
 
 
     public List<KVPair<Integer, Integer>> getAllSortedPairs() {
-        // TODO Auto-generated method stub
-        return null;
+        List<KVPair<Integer, Integer>> allPairs = new ArrayList<>();
+        for (Buffer buffer : buffers) {
+            List<KVPair<Integer, Integer>> bufferPairs = buffer.getPairs();
+            if (bufferPairs != null) {
+                allPairs.addAll(bufferPairs);
+            }
+        }
+        Collections.sort(allPairs, (pair1, pair2) -> pair1.getKey().compareTo(pair2.getKey()));
+        return allPairs;
     }
 
 
-    public String getCacheHits() {
-        // TODO Auto-generated method stub
-        return null;
+    public int getCacheHits() {
+        return cacheHits;
     }
 
 
-    public String getDiskReads() {
-        // TODO Auto-generated method stub
-        return null;
+    public int getDiskReads() {
+        return diskReads;
     }
 
 
-    public String getDiskWrites() {
-        // TODO Auto-generated method stub
-        return null;
+    public int getDiskWrites() {
+        return diskWrites;
     }
 }
