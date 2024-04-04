@@ -15,7 +15,7 @@ public class BufferPool {
 
 
     private void initializeBuffers() {
-        for (int i = 0; i < capacity; i++) {f
+        for (int i = 0; i < capacity; i++) {
             buffers.add(new Buffer(bufferSize));
         }
     }
