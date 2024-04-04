@@ -2,4 +2,4 @@ input.bin
 Cache Hits: 1
 Disk Reads: 0
 Disk Writes: 1024
-Runtime: 7 ms
+Runtime: 1 ms

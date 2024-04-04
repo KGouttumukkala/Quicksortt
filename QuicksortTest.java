@@ -50,6 +50,11 @@ public class QuicksortTest extends TestCase {
         assertFalse(CheckFile.check(fname));
         
         // hmmm... maybe do some sorting on that file ... 
+        String[] args = new String[3];
+        args[0] = fname; // the file to be sorted.
+        args[1] = "1"; // number of buffers, can impact performance
+        args[2] = "stats.txt"; // filename for sorting stats
+        Quicksort.main(args);
         // then we can do:
          assertTrue(CheckFile.check(fname));
     }
