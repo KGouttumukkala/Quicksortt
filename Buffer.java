@@ -7,8 +7,8 @@ public class Buffer {
     private int bufferSize;
     private AtomicLong lastUsedTime;
     
-    public Buffer(int size) {
-        bufferSize = size;
+    public Buffer() {
+        bufferSize = 4096;
         data = new byte[bufferSize];
         isDirty = false;
         lastUsedTime = new AtomicLong(System.currentTimeMillis());
