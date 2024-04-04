@@ -38,6 +38,20 @@ public class Quicksort {
      *      Command line parameters.  See the project spec!!!
      */
     public static void main(String[] args) {
-        // This is the main file for the program.
+        if (args.length != 3) {
+            System.err.println("Usage: java Quicksort <data-file-name> <numb-buffers> <stat-file-name>");
+            return;
+        }
+        
+        String dataFileName = args[0];
+        int numbBuffers = Integer.parseInt(args[1]);
+        String statFileName = args[2];
+        
+        BufferPool bufferPool = new BufferPool(numbBuffers);
+        readDataIntoBuffers(dataFileName, bufferPool);
+        quickSort(bufferPool);
+        writeSortedDataToFile(dataFileName, bufferPool);
+        generateRuntimeStatistics(statFileName, bufferPool);
+        
     }
 }
