@@ -42,7 +42,7 @@ public class Quicksort {
             System.err.println("Usage: java Quicksort <data-file-name> <numb-buffers> <stat-file-name>");
             return;
         }
-        
+        long startTime = System.currentTimeMillis();
         String dataFileName = args[0];
         int numbBuffers = Integer.parseInt(args[1]);
         String statFileName = args[2];
@@ -79,5 +79,13 @@ public class Quicksort {
         BufferPool bufferPool) {
         // TODO Auto-generated method stub
         
+    }
+    
+    private static long calculateRuntime(long startTime) {
+        long endTime = System.currentTimeMillis();
+        return endTime - startTime;
+    }
+    
+    private static void writeStatisticsToFile(String fileName, int cacheHits, int diskReads, int diskWrites, long runtime) {
     }
 }
