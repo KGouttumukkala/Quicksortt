@@ -17,12 +17,16 @@ public class Buffer {
     }
     
     public void readFromFile(FileInputStream fis, int blockSize) throws IOException {
+        System.out.println("File size before reading: " + fis.available());
         fis.read(data, 0, blockSize);
+        System.out.println("File size after reading: " + fis.available());
     }
     
     public void writeToFile(FileOutputStream fos) throws IOException {
+        System.out.println("File size before writing: " + fos.getChannel().size());
         fos.write(data);
         isDirty = false;
+        System.out.println("File size after writing: " + fos.getChannel().size());
     }
     
     public byte[] getData() {
