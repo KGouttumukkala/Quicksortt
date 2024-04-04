@@ -44,4 +44,16 @@ public class BufferPool {
         
         buffer.reset();
     }
+
+
+    public void addKeyValue(short key, short value) {
+        // TODO Auto-generated method stub
+        
+    }
+
+
+    public int getCapacity() {
+        // TODO Auto-generated method stub
+        return 0;
+    }
 }

@@ -53,12 +53,12 @@ public class Buffer {
         
     }
 
-    public List<Record> getRecords() {
+    public List<KVPair<Integer, Integer>> getPairs() {
         // TODO Auto-generated method stub
         return null;
     }
 
-    public void setRecords(List<Record> records) {
+    public void setPairs(List<KVPair<Integer, Integer>> pairs) {
         // TODO Auto-generated method stub
         
     }

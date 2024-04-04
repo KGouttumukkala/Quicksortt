@@ -2,6 +2,11 @@
  * {Project Description Here}
  */
 
+import java.io.BufferedInputStream;
+import java.io.DataInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -42,22 +47,30 @@ public class Quicksort {
             System.err.println("Usage: java Quicksort <data-file-name> <numb-buffers> <stat-file-name>");
             return;
         }
-        long startTime = System.currentTimeMillis();
         String dataFileName = args[0];
-        int numbBuffers = Integer.parseInt(args[1]);
+        int numbBuffers;
+        try {
+            numbBuffers = Integer.parseInt(args[1]);
+        } catch (NumberFormatException e) {
+            System.err.println("Error: Invalid number of buffers.");
+            return;
+        }
         String statFileName = args[2];
         
         BufferPool bufferPool = new BufferPool(numbBuffers);
         readDataIntoBuffers(dataFileName, bufferPool);
+        long startTime = System.currentTimeMillis();
         quickSort(bufferPool);
+        long endTime = System.currentTimeMillis();
+        long runtime = endTime - startTime;
         writeSortedDataToFile(dataFileName, bufferPool);
-        generateRuntimeStatistics(statFileName, bufferPool);
+        generateRuntimeStatistics(statFileName, bufferPool, runtime);
         
     }
 
     private static void generateRuntimeStatistics(
         String statFileName,
-        BufferPool bufferPool) {
+        BufferPool bufferPool, long runtime) {
         // TODO Auto-generated method stub
         
     }
@@ -75,52 +88,63 @@ public class Quicksort {
             buffer = bufferPool.getBuffer();
         } catch (IllegalStateException e) {
             System.err.println("Error: Buffer pool is empty.");
+            return;
         }
         
-        List<Record> records = buffer.getRecords();
-        quickSort(records, 0, records.size() - 1);
-        buffer.setRecords(records);
+        List<KVPair<Integer, Integer>> pairs = buffer.getPairs();
+        quickSort(pairs, 0, pairs.size() - 1);
+        buffer.setPairs(pairs);
         bufferPool.releaseBuffer(buffer);
     }
     
-    private static void quickSort(List<Record> records, int low, int high) {
+    private static void quickSort(List<KVPair<Integer, Integer>> pairs, int low, int high) {
         if (low < high) {
-            int partitionIndex = partition(records, low, high);
-            quickSort(records, low, partitionIndex - 1);
-            quickSort(records, partitionIndex + 1, high);
+            int partitionIndex = partition(pairs, low, high);
+            quickSort(pairs, low, partitionIndex - 1);
+            quickSort(pairs, partitionIndex + 1, high);
         }
-    }
-    
-    private static int partition(List<Record> records, int low, int high) {
-        Record pivot = records.get(high);
-        int i = low - 1;
-        for (int j = low; j < high; j++) {
-            if (records.get(j).getKey() < pivot.getKey()) {
-                i++;
-                swap(records, i, j);
-            }
-        }
-        swap(records, i + 1, high);
-        return i + 1;
-    }
-    
-    private static void swap(List<Record> records, int i, int j) {
-        Record temp = records.get(i);
-        records.set(i, records.get(j));
-        records.set(j, temp);
     }
 
-    private static void readDataIntoBuffers(
-        String dataFileName,
-        BufferPool bufferPool) {
-        // TODO Auto-generated method stub
-        
+    private static int partition(List<KVPair<Integer, Integer>> pairs, int low, int high) {
+        KVPair<Integer, Integer> pivot = pairs.get(high);
+        int i = low - 1;
+        for (int j = low; j < high; j++) {
+            if (pairs.get(j).getKey() < pivot.getKey()) {
+                i++;
+                swap(pairs, i, j);
+            }
+        }
+        swap(pairs, i + 1, high);
+        return i + 1;
     }
-    
-    private static long calculateRuntime(long startTime) {
-        long endTime = System.currentTimeMillis();
-        return endTime - startTime;
+
+    private static void swap(List<KVPair<Integer, Integer>> pairs, int i, int j) {
+        KVPair<Integer, Integer> temp = pairs.get(i);
+        pairs.set(i, pairs.get(j));
+        pairs.set(j, temp);
     }
+
+
+    private static void readDataIntoBuffers(String dataFileName, BufferPool bufferPool) {
+        FileGenerator fileGenerator = new FileGenerator(dataFileName, bufferPool.getCapacity());
+        fileGenerator.generateFile(FileType.BINARY); // Generate the binary file
+        File file = new File(dataFileName);
+        if (!file.exists()) {
+            System.err.println("Error: Generated file not found.");
+            return;
+        }
+
+        try (DataInputStream dis = new DataInputStream(new BufferedInputStream(new FileInputStream(file)))) {
+            while (dis.available() > 0) {
+                short key = dis.readShort();
+                short value = dis.readShort();
+                bufferPool.addKeyValue(key, value);
+            }
+        } catch (IOException e) {
+            System.err.println("Error reading data from file: " + e.getMessage());
+        }
+    }
+
     
     private static void writeStatisticsToFile(String fileName, int cacheHits, int diskReads, int diskWrites, long runtime) {
     }
