@@ -47,4 +47,8 @@ public class Buffer {
     public void setLastUsedTime(long time) {
         lastUsedTime.set(time);
     }
+    
+    public void reset() {
+        
+    }
 }
