@@ -80,6 +80,8 @@ public class Quicksort {
     private static void writeSortedDataToFile(String dataFileName, BufferPool bufferPool) {
         List<KVPair<Integer, Integer>> sortedPairs = bufferPool.getAllSortedPairs();
 
+        System.out.println("Debug: Writing sorted data to file...");
+
         try (DataOutputStream dos = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(dataFileName)))) {
             for (KVPair<Integer, Integer> pair : sortedPairs) {
                 dos.writeShort(pair.getKey());
@@ -88,6 +90,8 @@ public class Quicksort {
         } catch (IOException e) {
             System.err.println("Error writing sorted data to file: " + e.getMessage());
         }
+
+        System.out.println("Debug: Finished writing sorted data to file.");
     }
 
     private static void quickSort(BufferPool bufferPool) {
@@ -142,6 +146,8 @@ public class Quicksort {
             return;
         }
 
+        System.out.println("Debug: Reading data from file...");
+
         try (DataInputStream dis = new DataInputStream(new BufferedInputStream(new FileInputStream(file)))) {
             while (dis.available() > 0) {
                 short key = dis.readShort();
@@ -151,5 +157,7 @@ public class Quicksort {
         } catch (IOException e) {
             System.err.println("Error reading data from file: " + e.getMessage());
         }
+
+        System.out.println("Debug: Finished reading data from file.");
     }
 }
