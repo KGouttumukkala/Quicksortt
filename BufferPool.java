@@ -46,8 +46,20 @@ public class BufferPool {
         return numWrites;
     }
     
-    public void insert() {
-        
+    public void insert(int i, byte[] b) throws IOException {
+        Buffer remove = null;
+        if (currentNumBuffers == totalNumBuffers) {
+            remove = buffers[buffers.length - 1].copy();
+            Buffer buffer = new Buffer(i, b);
+            System.arraycopy(buffers, 0, buffers, 1, buffers.length - 1);
+            buffers[0] = buffer;
+            write(remove.getIndex(), remove.getBytes());
+        }
+        else {
+            System.arraycopy(buffers, 0, buffers, 1, buffers.length - 1);
+            buffers[0] = new Buffer(i, b);
+            currentNumBuffers++;
+        }
     }
     
     public Buffer getBuffer(int in) {
