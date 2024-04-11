@@ -1,3 +1,4 @@
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
@@ -34,6 +35,7 @@ public class TheSorter {
     private void quickSortRecursive(int[] array, int low, int high) {
         if (low < high) {
             int pivotIndex = partition(array, low, high);
+            //check for duplicates
             quickSortRecursive(array, low, pivotIndex - 1);
             quickSortRecursive(array, pivotIndex + 1, high);
         }
