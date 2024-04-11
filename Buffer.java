@@ -18,7 +18,7 @@ public class Buffer{
     public Buffer copy() {
         Buffer copy = new Buffer(this.index, this.bytes);
         if (isDirty()) {
-            copy.setDirty(true);
+            copy.setDirty();
         }
         return copy;
     }
@@ -27,8 +27,12 @@ public class Buffer{
         return isDirty;
     }
     
-    public void setDirty(boolean toSet) {
-        isDirty = toSet;
+    public void setDirty() {
+        isDirty = true;
+    }
+    
+    public void setClean() {
+        isDirty = false;
     }
     
     public int getIndex() {
