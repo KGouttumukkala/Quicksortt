@@ -45,26 +45,21 @@ public class Quicksort {
             return;
         }
         String dataFileName = args[0];
-        int numbBuffers;
+        int numBuffers;
         try {
-            numbBuffers = Integer.parseInt(args[1]);
+            numBuffers = Integer.parseInt(args[1]);
         } catch (NumberFormatException e) {
             System.err.println("Error: Invalid number of buffers.");
             return;
         }
         String statFileName = args[2];
         Statistics statistics = new Statistics();
+        TheSorter sorter = new TheSorter(dataFileName, numBuffers);
         long startTime = System.currentTimeMillis();
-        sort();
+        sorter.quickSort();
         long endTime = System.currentTimeMillis();
         long totalTime = endTime - startTime;
         statistics.setTime(totalTime);
         statistics.makeFile(dataFileName, statFileName);
     }
-
-    private static void sort() {
-        
-    }
-
-    
 }
