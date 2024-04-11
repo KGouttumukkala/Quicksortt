@@ -37,8 +37,9 @@ public class Quicksort {
     /**
      * @param args
      *      Command line parameters.  See the project spec!!!
+     * @throws IOException 
      */
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         if (args.length != 3) {
             System.err.println("Usage: java Quicksort <data-file-name> <numb-buffers> <stat-file-name>");
             return;
@@ -52,7 +53,16 @@ public class Quicksort {
             return;
         }
         String statFileName = args[2];
-        
+        Statistics statistics = new Statistics();
+        long startTime = System.currentTimeMillis();
+        sort();
+        long endTime = System.currentTimeMillis();
+        long totalTime = endTime - startTime;
+        statistics.setTime(totalTime);
+        statistics.makeFile(dataFileName, statFileName);
+    }
+
+    private static void sort() {
         
     }
 
