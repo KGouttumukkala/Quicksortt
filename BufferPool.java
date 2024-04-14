@@ -2,12 +2,14 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.util.Queue;
 
 public class BufferPool {
     private Buffer[] buffers;
     private int totalNumBuffers;
     private RandomAccessFile file;
     private int currentNumBuffers;
+    private Queue<Integer> bufferQueue;
 
     public BufferPool(int numBuffers, File f) throws FileNotFoundException {
         totalNumBuffers = numBuffers;
@@ -38,11 +40,9 @@ public class BufferPool {
                 byte[] b = current.getBytes();
                 write(current.getIndex(), b);
                 buffers[i] = null;
-                currentNumBuffers++;
+                numWrites++;
             }
         }
-        
-        currentNumBuffers = 0;
         return numWrites;
     }
     
@@ -97,9 +97,15 @@ public class BufferPool {
         return null;
     }
 
-    public byte[] getByte(int i) {
-        // TODO Auto-generated method stub
-        return null;
+    public byte getByte(int index) {
+
+    }
+    
+    private void evictLRU() {
+        if (buffers.length >= maxBuffers) {
+            int evictIndex = bufferQueue.poll(); // Remove LRU buffer index from queue
+            buffers.remove(evictIndex);
+        }
     }
 
 }
