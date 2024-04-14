@@ -6,98 +6,82 @@ import java.nio.ByteBuffer;
 
 public class TheSorter {
     private BufferPool bufferPool;
-    private String filename;
+    private File file;
     private int numBuffers;
+    private int numRecords;
 
     public TheSorter(String filename, int numBuffers) throws FileNotFoundException {
-        this.filename = filename;
-        this.numBuffers = numBuffers;
-        this.bufferPool = new BufferPool(numBuffers, new File(filename)); // Initialize your BufferPool
+        File file = new File(filename);
+        numRecords = (int)file.length() / 4;
+        this.bufferPool = new BufferPool(numBuffers, file);
     }
 
-    public void sortFile() throws IOException {
-        // Load the file into the buffer pool
-        loadFileIntoBufferPool();
-
-        // Perform Quicksort on the file through the buffer pool
-        quicksort(0, getFileSize() / 4 - 1); // Assuming each record is 4 bytes
-
-        // Write the sorted data back to the file
-        writeSortedDataToFile();
+    public void quickSort() throws IOException {
+        int low = 0;
+        int high = numRecords - 1;
+        quickSortRecursive(low, high);
     }
 
-    private void loadFileIntoBufferPool() throws IOException {
-        try (RandomAccessFile file = new RandomAccessFile(filename, "rw")) {
-            long fileSize = file.length();
-            long bytesPerBuffer = 4096; // Size of each buffer in bytes
-
-            for (int i = 0; i < fileSize / bytesPerBuffer; i++) {
-                byte[] data = new byte[(int) bytesPerBuffer];
-                file.seek(i * bytesPerBuffer);
-                file.read(data);
-                bufferPool.insert(i, data); // Insert data into buffer pool
-            }
-        }
-    }
-
-    private void quicksort(int low, int high) throws IOException {
+    private void quickSortRecursive(int low, int high) throws IOException {
         if (low < high) {
             int pivotIndex = partition(low, high);
-            quicksort(low, pivotIndex - 1);
-            quicksort(pivotIndex + 1, high);
+            quickSortRecursive(low, pivotIndex - 1);
+            quickSortRecursive(pivotIndex + 1, high);
         }
     }
 
     private int partition(int low, int high) throws IOException {
-        // Choose pivot value from a record in the file
-        short pivotKey = getKeyFromRecord(low); // Adjust based on your file structure
+        // Choose a pivot (e.g., median of three, random, etc.)
+        short pivot = medianOfThree(low, high);
+
+        // Partitioning logic using the buffer pool
         int i = low - 1;
         int j = high + 1;
-
         while (true) {
             do {
                 i++;
-            } while (getKeyFromRecord(i) < pivotKey);
+            } while (getShortValue(i) < pivot);
 
             do {
                 j--;
-            } while (getKeyFromRecord(j) > pivotKey);
+            } while (getShortValue(j) > pivot);
 
             if (i >= j) {
                 return j;
             }
-
-            // Swap records in the file through the buffer pool
-            swapRecords(i, j);
+            bufferPool.swap(i, j);
         }
     }
 
-    private short getKeyFromRecord(int recordIndex) throws IOException {
-        byte[] recordData = bufferPool.readRecord(recordIndex);
-        // Extract the key value from the record data
-        return extractKey(recordData); // Implement this method based on your file structure
+
+    private short medianOfThree(int low, int high) throws IOException {
+        int mid = low + (high - low) / 2;
+        short lowValue = getShortValue(low);
+        short midValue = getShortValue(mid);
+        short highValue = getShortValue(high);
+
+        if (lowValue > midValue) {
+            if (midValue > highValue) {
+                return midValue;
+            } else if (lowValue > highValue) {
+                return highValue;
+            } else {
+                return lowValue;
+            }
+        } else {
+            if (lowValue > highValue) {
+                return lowValue;
+            } else if (midValue > highValue) {
+                return highValue;
+            } else {
+                return midValue;
+            }
+        }
     }
 
-    private void swapRecords(int recordIndex1, int recordIndex2) throws IOException {
-        byte[] recordData1 = bufferPool.readRecord(recordIndex1);
-        byte[] recordData2 = bufferPool.readRecord(recordIndex2);
-        bufferPool.writeRecord(recordIndex1, recordData2);
-        bufferPool.writeRecord(recordIndex2, recordData1);
-    }
-
-    private void writeSortedDataToFile() throws IOException {
-        // Write the sorted data from the buffer pool back to the file
-        bufferPool.flushToFile(filename);
-    }
-
-    private int getFileSize() {
-        File file = new File(filename);
-        return (int)file.length();
-    }
-
-    private short extractKey(byte[] recordData) {
-        // Extract the key value from the record data
-        // This method will depend on your file structure
-        return ByteBuffer.wrap(recordData).getShort(); // Example assuming key is a short
+    private short getShortValue(int index) throws IOException {
+        byte[] bytes = bufferPool.getByte(index);
+        ByteBuffer buffer = ByteBuffer.wrap(bytes);
+        return buffer.getShort();
     }
 }

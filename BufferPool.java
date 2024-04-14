@@ -76,7 +76,7 @@ public class BufferPool {
         return null;
     }
 
-    public void swapBuffers(int index1, int index2) {
+    public void swap(int index1, int index2) {
         Buffer temp = buffers[index1];
         buffers[index1] = buffers[index2];
         buffers[index2] = temp;
@@ -92,7 +92,12 @@ public class BufferPool {
         
     }
 
-    public byte[] readRecord(int recordIndex2) {
+    public byte[] readRecord(int recordIndex) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    public byte[] getByte(int i) {
         // TODO Auto-generated method stub
         return null;
     }
