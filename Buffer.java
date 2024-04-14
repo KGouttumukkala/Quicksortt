@@ -54,4 +54,8 @@ public class Buffer{
     public int getSizeOfBuffer() {
         return bytes.length;
     }
+
+    public byte[] getData() {
+        return bytes;
+    }
 }

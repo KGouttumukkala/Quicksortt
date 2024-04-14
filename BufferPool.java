@@ -76,4 +76,25 @@ public class BufferPool {
         return null;
     }
 
+    public void swapBuffers(int index1, int index2) {
+        Buffer temp = buffers[index1];
+        buffers[index1] = buffers[index2];
+        buffers[index2] = temp;
+    }
+
+    public void writeRecord(int recordIndex2, byte[] recordData1) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    public void flushToFile(String filename) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    public byte[] readRecord(int recordIndex2) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
 }
