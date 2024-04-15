@@ -1,5 +1,4 @@
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
@@ -10,7 +9,7 @@ public class TheSorter {
     private int numBuffers;
     private int numRecords;
 
-    public TheSorter(String filename, int numBuffers) throws FileNotFoundException {
+    public TheSorter(String filename, int numBuffers) throws IOException {
         File file = new File(filename);
         numRecords = (int)file.length() / 4;
         this.bufferPool = new BufferPool(numBuffers, file);
@@ -20,6 +19,7 @@ public class TheSorter {
         int low = 0;
         int high = numRecords - 1;
         quickSortRecursive(low, high);
+        bufferPool.flush();
     }
 
     private void quickSortRecursive(int low, int high) throws IOException {

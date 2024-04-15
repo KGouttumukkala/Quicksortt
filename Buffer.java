@@ -65,10 +65,7 @@ public class Buffer{
     }
     
     public void addBytesToFront(byte[] newBytes) {
-        // Shift existing bytes to the back to make space for newBytes
         System.arraycopy(bytes, 0, bytes, newBytes.length, bytes.length - newBytes.length);
-
-        // Copy newBytes to the front of the buffer
         System.arraycopy(newBytes, 0, bytes, 0, newBytes.length);
     }
 }

@@ -1,5 +1,4 @@
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.util.LinkedList;
@@ -9,22 +8,33 @@ public class BufferPool {
     private Buffer[] buffers;
     private int totalNumBuffers;
     private RandomAccessFile file;
-    private int currentNumBuffers;
     private Queue<Integer> bufferQueue;
     private int[] indexes;
 
-    public BufferPool(int numBuffers, File f) throws FileNotFoundException {
+    public BufferPool(int numBuffers, File f) throws IOException {
         totalNumBuffers = numBuffers;
         buffers = new Buffer[totalNumBuffers];
-        currentNumBuffers = 0;
         file = new RandomAccessFile(f, "rw");
         indexes = new int[numBuffers * 1024];
         bufferQueue = new LinkedList<>();
         for (int i = 0; i < numBuffers; i++) {
             bufferQueue.offer(i);
         }
+        populateBuffers();
     }
     
+    private void populateBuffers() throws IOException {
+        for (int i = 0; i < totalNumBuffers; i++) {
+            byte[] bytesFromDisk = getBytesFromFile(i * 1024, 1024);
+            buffers[i].changeBytes(bytesFromDisk);
+            int start = i * 1024;
+            int end = start + 1023;
+            for (int j = start; j <= end; j++) {
+                indexes[j] = j;
+            }
+        }
+    }
+
     public void write(int i, byte[] w) throws IOException {
         file.seek(i);
         file.write(w);
@@ -57,62 +67,19 @@ public class BufferPool {
         byte[] b = new byte[4];
         file.seek(i * 4);
         file.read(b);
+        int frontNumber = bufferQueue.poll();
+        buffers[frontNumber].addBytesToFront(b);
+        bufferQueue.offer(frontNumber);
         return b;
     }
     
-    public int flush() throws IOException {
-        Buffer current = null;
-        int numWrites = 0;
-        
-        for (int i = 0; i < currentNumBuffers; i++) {
-            current = buffers[i];
-            if (current.isDirty()) {
-                byte[] b = current.getBytes();
-                write(current.getIndex(), b);
-                buffers[i] = null;
-                numWrites++;
-            }
-        }
-        return numWrites;
-    }
-    
-    public Buffer getBuffer(int in) {
-        Buffer current = null;
-        
-        for (int i = 0; i < currentNumBuffers; i++) {
-            current = buffers[i];
-            int start = current.getIndex();
-            int end = start + current.getSizeOfBuffer();
-            if (end > in && start <= in) {
-                return current;
-            }
-        }
-        return null;
+    public void flush() throws IOException {
     }
 
     public void swap(int index1, int index2) {
         Buffer temp = buffers[index1];
         buffers[index1] = buffers[index2];
         buffers[index2] = temp;
-    }
-
-    public void writeRecord(int recordIndex2, byte[] recordData1) {
-        // TODO Auto-generated method stub
-        
-    }
-
-    public void flushToFile(String filename) {
-        // TODO Auto-generated method stub
-        
-    }
-
-    public byte[] readRecord(int recordIndex) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-    
-    private void evictLRU() {
-        
     }
     
     private int containsIndex(int i) {
@@ -122,5 +89,12 @@ public class BufferPool {
             }
         }
         return -1;
+    }
+    
+    private byte[] getBytesFromFile(int offset, int length) throws IOException {
+        byte[] bytes = new byte[length];
+        file.seek(offset);
+        file.read(bytes);
+        return bytes;
     }
 }
