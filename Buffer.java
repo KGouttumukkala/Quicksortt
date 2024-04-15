@@ -6,14 +6,13 @@ public class Buffer{
     private boolean isDirty;
     private byte[] bytes;
     
-    public Buffer(int i, byte[] array) {
-        index = i;
+    public Buffer(byte[] array) {
         isDirty = false;
         bytes = array;
     }
     
     public Buffer copy() {
-        Buffer copy = new Buffer(this.index, this.bytes);
+        Buffer copy = new Buffer(this.bytes);
         if (isDirty()) {
             copy.setDirty();
         }

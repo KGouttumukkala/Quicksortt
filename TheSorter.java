@@ -19,7 +19,7 @@ public class TheSorter {
         int low = 0;
         int high = numRecords - 1;
         quickSortRecursive(low, high);
-        bufferPool.flush();
+//        bufferPool.flush();
     }
 
     private void quickSortRecursive(int low, int high) throws IOException {
