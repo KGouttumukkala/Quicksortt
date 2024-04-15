@@ -2,6 +2,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.util.LinkedList;
 import java.util.Queue;
 
 public class BufferPool {
@@ -10,12 +11,18 @@ public class BufferPool {
     private RandomAccessFile file;
     private int currentNumBuffers;
     private Queue<Integer> bufferQueue;
+    private int[] indexes;
 
     public BufferPool(int numBuffers, File f) throws FileNotFoundException {
         totalNumBuffers = numBuffers;
         buffers = new Buffer[totalNumBuffers];
         currentNumBuffers = 0;
         file = new RandomAccessFile(f, "rw");
+        indexes = new int[numBuffers * 1024];
+        bufferQueue = new LinkedList<>();
+        for (int i = 0; i < numBuffers; i++) {
+            bufferQueue.offer(i);
+        }
     }
     
     public void write(int i, byte[] w) throws IOException {
@@ -23,9 +30,32 @@ public class BufferPool {
         file.write(w);
     }
     
-    public byte[] read(int i) throws IOException {
+    public byte[] getByte(int i) throws IOException {
+        int index = containsIndex(i);
+        if (index == -1) {
+            return getByteFromFile(i);
+        }
+        else {
+            int bufferNum = index / 1024;
+            int offset = index % 1024;
+            byte[] bytes = buffers[bufferNum].getBytes(offset);
+            updateBuffersAndIndexes(bufferNum, offset, i, index);
+            return bytes;
+        }
+    }
+    
+    private void updateBuffersAndIndexes(int bufferNum, int offset, int index, int oldPosition) {
+        int newPosition = bufferNum * 1024;
+        for (int i = newPosition + 1; i < (bufferNum + 1) * 1024; i++){
+            indexes[i] = indexes[i - 1];
+        }
+        indexes[newPosition] = index;
+        buffers[bufferNum].moveBytesToFront(offset);
+    }
+
+    private byte[] getByteFromFile(int i) throws IOException {
         byte[] b = new byte[4];
-        file.seek(i);
+        file.seek(i * 4);
         file.read(b);
         return b;
     }
@@ -44,22 +74,6 @@ public class BufferPool {
             }
         }
         return numWrites;
-    }
-    
-    public void insert(int i, byte[] b) throws IOException {
-        Buffer remove = null;
-        if (currentNumBuffers == totalNumBuffers) {
-            remove = buffers[buffers.length - 1].copy();
-            Buffer buffer = new Buffer(i, b);
-            System.arraycopy(buffers, 0, buffers, 1, buffers.length - 1);
-            buffers[0] = buffer;
-            write(remove.getIndex(), remove.getBytes());
-        }
-        else {
-            System.arraycopy(buffers, 0, buffers, 1, buffers.length - 1);
-            buffers[0] = new Buffer(i, b);
-            currentNumBuffers++;
-        }
     }
     
     public Buffer getBuffer(int in) {
@@ -96,16 +110,17 @@ public class BufferPool {
         // TODO Auto-generated method stub
         return null;
     }
-
-    public byte getByte(int index) {
-
-    }
     
     private void evictLRU() {
-        if (buffers.length >= maxBuffers) {
-            int evictIndex = bufferQueue.poll(); // Remove LRU buffer index from queue
-            buffers.remove(evictIndex);
-        }
+        
     }
-
+    
+    private int containsIndex(int i) {
+        for (int index = 0; index < indexes.length; index++) {
+            if (indexes[index] == i) {
+                return index;
+            }
+        }
+        return -1;
+    }
 }

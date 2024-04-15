@@ -1,3 +1,5 @@
+import java.util.Arrays;
+
 public class Buffer{
     
     private int index;
@@ -8,11 +10,6 @@ public class Buffer{
         index = i;
         isDirty = false;
         bytes = array;
-    }
-    
-    public void setSingleByte(byte val, int i) {
-        bytes[i] = val;
-        isDirty = true;
     }
     
     public Buffer copy() {
@@ -55,7 +52,23 @@ public class Buffer{
         return bytes.length;
     }
 
-    public byte[] getData() {
-        return bytes;
+    public byte[] getBytes(int offset) {
+        return Arrays.copyOfRange(bytes, offset, offset + 4);
+        
+    }
+    
+    public void moveBytesToFront(int index) {
+        byte[] temp = new byte[4];
+        System.arraycopy(bytes, index, temp, 0, 4);
+        System.arraycopy(bytes, 0, bytes, 4, index);
+        System.arraycopy(temp, 0, bytes, 0, 4);
+    }
+    
+    public void addBytesToFront(byte[] newBytes) {
+        // Shift existing bytes to the back to make space for newBytes
+        System.arraycopy(bytes, 0, bytes, newBytes.length, bytes.length - newBytes.length);
+
+        // Copy newBytes to the front of the buffer
+        System.arraycopy(newBytes, 0, bytes, 0, newBytes.length);
     }
 }
