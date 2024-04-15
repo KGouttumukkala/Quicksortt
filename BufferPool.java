@@ -58,9 +58,45 @@ public class BufferPool {
         file.close(); // Close the file
     }
 
-    public byte[] getByte(int index) {
-        // TODO Auto-generated method stub
-        return null;
+    public byte[] getByte(int index) throws IOException {
+        int position = checkIfIndexIsInBuffers(index);
+        if (position == -1) {
+            byte[] b = getBytesFromFile(index);
+            addIndexAndBytesToFront(index, b);
+            return b;
+        }
+        else {
+            int bufferNum = getBufferNumberFromIndex(index);
+            int bufferPosition = getBufferByteOffsetFromIndex(index);
+            byte[] b = buffers[bufferNum].getBytes(bufferPosition);
+            moveIndexAndBytesToFront(position, bufferNum, index, bufferPosition);
+            return b;
+        }
+    }
+    
+    private void addIndexAndBytesToFront(int index, byte[] b) {
+        int bufferNum = bufferQueue.poll();
+        bufferQueue.offer(bufferNum);
+    }
+    
+    private void moveIndexAndBytesToFront(int position, int bufferNum, int index, int bufferPosition) {
+        int startingPos = position;
+        int endingPos = bufferNum * 1024;
+        for (int i = startingPos; i > endingPos; i--) {
+            indexes[i] = indexes[i - 1];
+        }
+        indexes[endingPos] = index;
+        buffers[bufferNum].moveBytesToFront(bufferPosition);
+        bufferQueue.remove(bufferNum);
+        bufferQueue.offer(bufferNum);
+    }
+    
+    private byte[] getBytesFromFile(int index) throws IOException {
+        byte[] bytes = new byte[4]; // Assuming each buffer can hold 4096 bytes
+        long bytePosition = (long) index * bytes.length;
+        file.seek(bytePosition);
+        file.read(bytes);
+        return bytes;
     }
     
 
