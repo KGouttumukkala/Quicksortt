@@ -77,6 +77,7 @@ public class BufferPool {
     private void addIndexAndBytesToFront(int index, byte[] b) {
         int bufferNum = bufferQueue.poll();
         bufferQueue.offer(bufferNum);
+        buffers[bufferNum].addBytesToFront(b);
     }
     
     private void moveIndexAndBytesToFront(int position, int bufferNum, int index, int bufferPosition) {
