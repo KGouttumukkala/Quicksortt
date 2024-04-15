@@ -18,11 +18,12 @@ public class BufferPool {
         indexes = new int[numBuffers * 1024];
         bufferQueue = new LinkedList<>();
         populateBuffers();
+        printBuffers();
     }
     
     private void populateBuffers() throws IOException {
         for (int i = 0; i < totalNumBuffers; i++) {
-            byte[] bytesFromDisk = getBytesFromFile(i);
+            byte[] bytesFromDisk = getInitialBytesFromFile(i);
             buffers[i] = new Buffer(bytesFromDisk); // Initialize each buffer object
             bufferQueue.offer(i);
             int start = i * 1024;
@@ -33,7 +34,7 @@ public class BufferPool {
         }
     }
     
-    private byte[] getBytesFromFile(int i) throws IOException {
+    private byte[] getInitialBytesFromFile(int i) throws IOException {
         byte[] bytes = new byte[4096]; // Assuming each buffer can hold 4096 bytes
         long bytePosition = (long) i * bytes.length;
         file.seek(bytePosition);
@@ -61,9 +62,36 @@ public class BufferPool {
         // TODO Auto-generated method stub
         return null;
     }
+    
 
     public void swap(int i, int j) {
         // TODO Auto-generated method stub
-        
+    }
+    
+    private int checkIfIndexIsInBuffers(int index) {
+        for (int i = 0; i < indexes.length; i++) {
+            if (indexes[i] == index) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    
+    public void printBuffers() {
+        for (int i = 0; i < totalNumBuffers; i++) {
+            System.out.println("Buffer " + i + ":");
+            if (buffers[i] != null) {
+                System.out.println(new String(buffers[i].getBytes())); // Assuming bytes represent text data
+            } else {
+                System.out.println("Empty");
+            }
+            System.out.println("----------");
+        }
+        System.out.println("Indexes:");
+        for (int index : indexes) {
+            System.out.print(index + " ");
+        }
+        System.out.println("\n----------");
     }
 }

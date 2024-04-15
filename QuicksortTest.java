@@ -68,14 +68,14 @@ public class QuicksortTest extends TestCase {
      * @throws Exception either a IOException or FileNotFoundException */
     public void testSorting() throws Exception {
         String fname = "input.bin";
-        FileGenerator fg = new FileGenerator(fname, 1);
-        fg.generateFile(FileType.BINARY);
+        FileGenerator fg = new FileGenerator(fname, 2);
+        fg.generateFile(FileType.ASCII);
         
         assertFalse(CheckFile.check(fname)); // file shouldn't be sorted
 
         String[] args = new String[3];
         args[0] = fname; // the file to be sorted.
-        args[1] = "1"; // number of buffers, can impact performance
+        args[1] = "2"; // number of buffers, can impact performance
         args[2] = "stats.txt"; // filename for sorting stats
         Quicksort.main(args);
         // Now the file *should* be sorted, so lets check!
