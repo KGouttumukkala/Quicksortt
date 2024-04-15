@@ -25,7 +25,7 @@ public class BufferPool {
     
     private void populateBuffers() throws IOException {
         for (int i = 0; i < totalNumBuffers; i++) {
-            byte[] bytesFromDisk = getBytesFromFile(i * 1024, 1024);
+            byte[] bytesFromDisk = getBytesFromFile();
             buffers[i].changeBytes(bytesFromDisk);
             int start = i * 1024;
             int end = start + 1023;
@@ -34,67 +34,20 @@ public class BufferPool {
             }
         }
     }
-
-    public void write(int i, byte[] w) throws IOException {
-        file.seek(i);
-        file.write(w);
+    
+    private int getBufferNumberFromIndex(int index) {
+        return index / 1024;
     }
     
-    public byte[] getByte(int i) throws IOException {
-        int index = containsIndex(i);
-        if (index == -1) {
-            return getByteFromFile(i);
-        }
-        else {
-            int bufferNum = index / 1024;
-            int offset = index % 1024;
-            byte[] bytes = buffers[bufferNum].getBytes(offset);
-            updateBuffersAndIndexes(bufferNum, offset, i, index);
-            return bytes;
-        }
+    private int getBufferByteOffsetFromIndex(int index) {
+        
     }
     
-    private void updateBuffersAndIndexes(int bufferNum, int offset, int index, int oldPosition) {
-        int newPosition = bufferNum * 1024;
-        for (int i = newPosition + 1; i < (bufferNum + 1) * 1024; i++){
-            indexes[i] = indexes[i - 1];
-        }
-        indexes[newPosition] = index;
-        buffers[bufferNum].moveBytesToFront(offset);
-    }
-
-    private byte[] getByteFromFile(int i) throws IOException {
-        byte[] b = new byte[4];
-        file.seek(i * 4);
-        file.read(b);
-        int frontNumber = bufferQueue.poll();
-        buffers[frontNumber].addBytesToFront(b);
-        bufferQueue.offer(frontNumber);
-        return b;
+    private int getByteNumberFromIndexAndBufferNumber(int index, int bufferNumber) {
+        
     }
     
-    public void flush() throws IOException {
-    }
-
-    public void swap(int index1, int index2) {
-        Buffer temp = buffers[index1];
-        buffers[index1] = buffers[index2];
-        buffers[index2] = temp;
-    }
-    
-    private int containsIndex(int i) {
-        for (int index = 0; index < indexes.length; index++) {
-            if (indexes[index] == i) {
-                return index;
-            }
-        }
-        return -1;
-    }
-    
-    private byte[] getBytesFromFile(int offset, int length) throws IOException {
-        byte[] bytes = new byte[length];
-        file.seek(offset);
-        file.read(bytes);
-        return bytes;
+    private int getFileByteNumberFromIndex(int index) {
+        return index * 4;
     }
 }
