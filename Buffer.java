@@ -51,14 +51,14 @@ public class Buffer {
 
 
     public byte[] addBytesToFront(byte[] newBytes) {
-        byte[] removedBytes = new byte[newBytes.length];
-        System.arraycopy(bytes, 0, removedBytes, 0, newBytes.length);
-        System.arraycopy(bytes, newBytes.length, bytes, 0, bytes.length
-            - newBytes.length);
-        System.arraycopy(newBytes, 0, bytes, bytes.length - newBytes.length,
-            newBytes.length);
+        byte[] removedBytes = new byte[4];
+        System.arraycopy(bytes, bytes.length - 4, removedBytes, 0, 4);
+        System.arraycopy(bytes, 0, bytes, 4, bytes.length - 4);
+        System.arraycopy(newBytes, 0, bytes, 0, 4);
         return removedBytes;
     }
+
+
 
 
     public void setBytes(byte[] newBytes, int offset) {

@@ -67,9 +67,9 @@ public class QuicksortTest extends TestCase {
      *
      * @throws Exception either a IOException or FileNotFoundException */
     public void testSorting() throws Exception {
-        String fname = "input.bin";
-        FileGenerator fg = new FileGenerator(fname, 2);
-        fg.generateFile(FileType.BINARY);
+        String fname = "input.txt";
+        FileGenerator fg = new FileGenerator(fname, 10);
+        fg.generateFile(FileType.ASCII);
         
         assertFalse(CheckFile.check(fname)); // file shouldn't be sorted
 

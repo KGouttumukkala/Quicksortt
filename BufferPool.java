@@ -26,8 +26,7 @@ public class BufferPool {
     private void populateBuffers() throws IOException {
         for (int i = 0; i < totalNumBuffers; i++) {
             byte[] bytesFromDisk = getInitialBytesFromFile(i);
-            buffers[i] = new Buffer(bytesFromDisk); // Initialize each buffer
-                                                    // object
+            buffers[i] = new Buffer(bytesFromDisk);
             bufferQueue.offer(i);
             int start = i * 1024;
             int end = start + 1023;
@@ -39,8 +38,7 @@ public class BufferPool {
 
 
     private byte[] getInitialBytesFromFile(int i) throws IOException {
-        byte[] bytes = new byte[4096]; // Assuming each buffer can hold 4096
-                                       // bytes
+        byte[] bytes = new byte[4096];
         long bytePosition = (long)i * bytes.length;
         file.seek(bytePosition);
         file.read(bytes);
@@ -54,23 +52,23 @@ public class BufferPool {
 
 
     private int getBufferByteOffsetFromPosition(int position) {
-        return (position % 1024) * 4; // Assuming each record is 4 bytes
+        return (position % 1024) * 4;
     }
 
 
     private int getFileByteNumberFromIndex(int index) {
-        return index * 4; // Assuming each record is 4 bytes
+        return index * 4;
     }
 
 
     public void close() throws IOException {
-        file.close(); // Close the file
+        file.close();
     }
 
 
     public byte[] getByte(int index) throws IOException {
         int position = checkIfIndexIsInBuffers(index);
-        if (position == -1) {
+        if (position == -1) {//here
             byte[] b = getBytesFromFile(index);
             addIndexAndBytesToFront(index, b);
             return b;
@@ -123,7 +121,7 @@ public class BufferPool {
 
 
     private byte[] getBytesFromFile(int index) throws IOException {
-        byte[] bytes = new byte[4]; // Assuming each buffer can hold 4096 bytes
+        byte[] bytes = new byte[4];
         long bytePosition = getFileByteNumberFromIndex(index);
         file.seek(bytePosition);
         file.read(bytes);
@@ -177,11 +175,7 @@ public class BufferPool {
         for (int i = 0; i < totalNumBuffers; i++) {
             System.out.println("Buffer " + i + ":");
             if (buffers[i] != null) {
-                System.out.println(new String(buffers[i].getBytes())); // Assuming
-                                                                       // bytes
-                                                                       // represent
-                                                                       // text
-                                                                       // data
+                System.out.println(new String(buffers[i].getBytes()));
             }
             else {
                 System.out.println("Empty");

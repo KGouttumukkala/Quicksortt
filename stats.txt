@@ -1,5 +1,5 @@
-Filename: input.bin
-Cache Hits: 57470
-Disk Reads: 0
-Disk Writes: 2048
-Runtime: 48 ms
+Filename: input.txt
+Cache Hits: 81930
+Disk Reads: 46996
+Disk Writes: 49044
+Runtime: 410 ms
