@@ -10,6 +10,7 @@ public class Statistics {
     private int diskReads;
     private int diskWrites;
     public int timeCheckingArray;
+    public int timeCheckingDuplicates;
 
     public Statistics() {
         time = 0;
@@ -17,6 +18,7 @@ public class Statistics {
         diskReads = 0;
         diskWrites = 0;
         timeCheckingArray = 0;
+        timeCheckingDuplicates = 0;
     }
 
 
@@ -54,6 +56,7 @@ public class Statistics {
         writer2.write("Disk Writes: " + diskWrites + "\n");
         writer2.write("Runtime: " + time + " ms");
         System.out.println("Time checking array:" + timeCheckingArray + " milliseconds");
+        System.out.println("Time checking duplicates:" + timeCheckingDuplicates + " milliseconds");
         writer2.close();
     }
 

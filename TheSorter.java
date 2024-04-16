@@ -8,12 +8,14 @@ public class TheSorter {
     private File file;
     private int numBuffers;
     private int numRecords;
+    private Statistics stats;
 
     public TheSorter(String filename, int numBuffers, Statistics stats)
         throws IOException {
         File file = new File(filename);
         numRecords = (int)file.length() / 4;
         this.bufferPool = new BufferPool(numBuffers, file, stats);
+        this.stats = stats;
     }
 
 
@@ -27,22 +29,13 @@ public class TheSorter {
 
     private void quickSortRecursive(int low, int high) throws IOException {
         if (low < high) {
-            boolean allRepeats = true;
             short pivotValue = getShortValue(low);
-            for (int i = low + 1; i <= high; i++) {
-                if (getShortValue(i) != pivotValue) {
-                    allRepeats = false;
-                    break;
-                }
-            }
-
-            if (!allRepeats) {
-                int pivotIndex = partition(low, high);
-                quickSortRecursive(low, pivotIndex - 1);
-                quickSortRecursive(pivotIndex + 1, high);
-            }
+            int pivotIndex = partition(low, high);
+            quickSortRecursive(low, pivotIndex - 1);
+            quickSortRecursive(pivotIndex + 1, high);
         }
     }
+
 
 
     private int partition(int low, int high) throws IOException {
