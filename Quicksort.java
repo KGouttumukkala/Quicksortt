@@ -54,7 +54,7 @@ public class Quicksort {
         }
         String statFileName = args[2];
         Statistics statistics = new Statistics();
-        TheSorter sorter = new TheSorter(dataFileName, numBuffers);
+        TheSorter sorter = new TheSorter(dataFileName, numBuffers, statistics);
         long startTime = System.currentTimeMillis();
         sorter.quickSort();
         long endTime = System.currentTimeMillis();

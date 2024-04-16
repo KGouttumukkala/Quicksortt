@@ -10,13 +10,15 @@ public class BufferPool {
     private RandomAccessFile file;
     private Queue<Integer> bufferQueue;
     private int[] indexes;
+    private Statistics stats;
 
-    public BufferPool(int numBuffers, File f) throws IOException {
+    public BufferPool(int numBuffers, File f, Statistics statistics) throws IOException {
         totalNumBuffers = numBuffers;
         buffers = new Buffer[totalNumBuffers];
         file = new RandomAccessFile(f, "rw");
         indexes = new int[numBuffers * 1024];
         bufferQueue = new LinkedList<>();
+        stats = statistics;
         populateBuffers();
     }
 
@@ -99,6 +101,7 @@ public class BufferPool {
         int byteNumberToCommit = getFileByteNumberFromIndex(indexToCommit);
         file.seek(byteNumberToCommit);
         file.write(bytesToCommit);
+        stats.incrementDiskWrites();
     }
 
 
@@ -124,6 +127,7 @@ public class BufferPool {
         long bytePosition = getFileByteNumberFromIndex(index);
         file.seek(bytePosition);
         file.read(bytes);
+        stats.incrementDiskReads();
         return bytes;
     }
 
@@ -161,6 +165,7 @@ public class BufferPool {
     private int checkIfIndexIsInBuffers(int index) {
         for (int i = 0; i < indexes.length; i++) {
             if (indexes[i] == index) {
+                stats.incrementCacheHits();
                 return i;
             }
         }
@@ -202,6 +207,7 @@ public class BufferPool {
                     int filePosition = getFileByteNumberFromIndex(index);
                     file.seek(filePosition);
                     file.write(b);
+                    stats.incrementDiskWrites();
                 }
             }
             buffers[i].setClean();

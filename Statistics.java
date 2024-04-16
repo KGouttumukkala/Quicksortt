@@ -36,8 +36,7 @@ public class Statistics {
 
     public void makeFile(String sortFileName, String statFileName) throws IOException {
         File file = new File(statFileName);
-        file.createNewFile();
-        FileWriter writer = new FileWriter(file.getAbsolutePath(), true);
+        FileWriter writer = new FileWriter(file.getAbsolutePath());  // This line has changed
         BufferedWriter writer2 = new BufferedWriter(writer);
         writer2.write("Filename: " + sortFileName + "\n");
         writer2.write("Cache Hits: " + cacheHits + "\n");
@@ -46,5 +45,6 @@ public class Statistics {
         writer2.write("Runtime: " + time + " ms");
         writer2.close();
     }
+
 
 }

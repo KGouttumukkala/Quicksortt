@@ -9,10 +9,10 @@ public class TheSorter {
     private int numBuffers;
     private int numRecords;
 
-    public TheSorter(String filename, int numBuffers) throws IOException {
+    public TheSorter(String filename, int numBuffers, Statistics stats) throws IOException {
         File file = new File(filename);
         numRecords = (int)file.length() / 4;
-        this.bufferPool = new BufferPool(numBuffers, file);
+        this.bufferPool = new BufferPool(numBuffers, file, stats);
     }
 
 
