@@ -212,7 +212,6 @@ public class BufferPool {
         long endTime = System.nanoTime(); // Get end time in nanoseconds
         long elapsedTime = endTime - startTime; // Calculate elapsed time in nanoseconds
         double milliseconds = (double) elapsedTime / 1_000_000.0; // Convert nanoseconds to milliseconds
-        System.out.println("Flush time: " + milliseconds + " milliseconds");
     }
 
 }

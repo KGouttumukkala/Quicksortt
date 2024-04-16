@@ -9,12 +9,14 @@ public class Statistics {
     private int cacheHits;
     private int diskReads;
     private int diskWrites;
+    public int timeCheckingArray;
 
     public Statistics() {
         time = 0;
         cacheHits = 0;
         diskReads = 0;
         diskWrites = 0;
+        timeCheckingArray = 0;
     }
 
 
@@ -51,6 +53,7 @@ public class Statistics {
         writer2.write("Disk Reads: " + diskReads + "\n");
         writer2.write("Disk Writes: " + diskWrites + "\n");
         writer2.write("Runtime: " + time + " ms");
+        System.out.println("Time checking array:" + timeCheckingArray + " milliseconds");
         writer2.close();
     }
 
