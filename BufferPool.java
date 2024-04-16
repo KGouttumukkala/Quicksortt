@@ -11,6 +11,7 @@ public class BufferPool {
     private Queue<Integer> bufferQueue;
     private int[] indexes;
     private Statistics stats;
+    
 
     public BufferPool(int numBuffers, File f, Statistics statistics)
         throws IOException {
@@ -68,8 +69,8 @@ public class BufferPool {
 
 
     public byte[] getByte(int index) throws IOException {
-        long startTime = System.currentTimeMillis();
         int position = checkIfIndexIsInBuffers(index);
+        long startTime = System.currentTimeMillis();
         if (position == -1) {// here
             byte[] b = getBytesFromFile(index);
             addIndexAndBytesToFront(index, b);

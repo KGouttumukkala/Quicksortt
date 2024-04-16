@@ -1,5 +1,5 @@
 Filename: input.txt
-Cache Hits: 124887
-Disk Reads: 37141
-Disk Writes: 41237
-Runtime: 943 ms
+Cache Hits: 392431
+Disk Reads: 6590
+Disk Writes: 10686
+Runtime: 2825 ms
