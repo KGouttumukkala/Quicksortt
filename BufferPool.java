@@ -162,14 +162,24 @@ public class BufferPool {
 
 
     private int checkIfIndexIsInBuffers(int index) {
+        long startTime = System.nanoTime(); // Get start time in nanoseconds
+        
         for (int i = 0; i < indexes.length; i++) {
             if (indexes[i] == index) {
                 stats.incrementCacheHits();
+                long endTime = System.nanoTime(); // Get end time in nanoseconds
+                long elapsedTime = endTime - startTime; // Calculate elapsed time in nanoseconds
+                stats.timeCheckingArray += elapsedTime; // Record elapsed time in stats
                 return i;
             }
         }
+
+        long endTime = System.nanoTime(); // Get end time in nanoseconds
+        long elapsedTime = endTime - startTime; // Calculate elapsed time in nanoseconds
+        stats.timeCheckingArray += elapsedTime; // Record elapsed time in stats
         return -1;
     }
+
 
 
     public void printBuffers() {
