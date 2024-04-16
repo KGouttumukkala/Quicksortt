@@ -318,4 +318,20 @@ Runtime: 42 msFilename: input.txt
 Cache Hits: 0
 Disk Reads: 0
 Disk Writes: 0
-Runtime: 35 ms
+Runtime: 35 msFilename: checkme.txt
+Cache Hits: 0
+Disk Reads: 0
+Disk Writes: 0
+Runtime: 41 msFilename: input.bin
+Cache Hits: 0
+Disk Reads: 0
+Disk Writes: 0
+Runtime: 36 msFilename: checkme.txt
+Cache Hits: 0
+Disk Reads: 0
+Disk Writes: 0
+Runtime: 40 msFilename: input.txt
+Cache Hits: 0
+Disk Reads: 0
+Disk Writes: 0
+Runtime: 37 ms
