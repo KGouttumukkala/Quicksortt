@@ -68,10 +68,13 @@ public class BufferPool {
 
 
     public byte[] getByte(int index) throws IOException {
+        long startTime = System.currentTimeMillis();
         int position = checkIfIndexIsInBuffers(index);
         if (position == -1) {// here
             byte[] b = getBytesFromFile(index);
             addIndexAndBytesToFront(index, b);
+            long endTime = System.currentTimeMillis();
+            stats.timeGettingBytes += endTime - startTime;
             return b;
         }
         else {
@@ -80,6 +83,8 @@ public class BufferPool {
             byte[] b = buffers[bufferNum].getBytes(bufferPosition);
             moveIndexAndBytesToFront(position, bufferNum, index,
                 bufferPosition);
+            long endTime = System.currentTimeMillis();
+            stats.timeGettingBytes += endTime - startTime;
             return b;
         }
     }
@@ -132,6 +137,7 @@ public class BufferPool {
 
 
     public void swap(int i, int j) throws IOException {
+        long startTime = System.currentTimeMillis();
         int positionI = checkIfIndexIsInBuffers(i);
         int positionJ = checkIfIndexIsInBuffers(j);
         if (positionI == -1) {
@@ -158,6 +164,8 @@ public class BufferPool {
         buffers[bufferNumJ].setBytes(byteI, bufferOffsetJ);
         buffers[bufferNumI].setDirty();
         buffers[bufferNumJ].setDirty();
+        long endTime = System.currentTimeMillis();
+        stats.timeSwapping += endTime - startTime;
     }
 
 
@@ -201,8 +209,7 @@ public class BufferPool {
 
 
     public void flush() throws IOException {
-        long startTime = System.nanoTime(); // Get start time in nanoseconds
-
+        long startTime = System.currentTimeMillis();
         for (int i = 0; i < totalNumBuffers; i++) {
             if (buffers[i].isDirty()) {
                 for (int j = i * 1024; j < (i + 1) * 1024; j++) {
@@ -217,10 +224,7 @@ public class BufferPool {
             }
             buffers[i].setClean();
         }
-
-        long endTime = System.nanoTime(); // Get end time in nanoseconds
-        long elapsedTime = endTime - startTime; // Calculate elapsed time in nanoseconds
-        double milliseconds = (double) elapsedTime / 1_000_000.0; // Convert nanoseconds to milliseconds
+        long endTime = System.currentTimeMillis();
+        stats.timeFlushing += endTime - startTime;
     }
-
 }

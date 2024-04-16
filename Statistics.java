@@ -11,6 +11,9 @@ public class Statistics {
     private int diskWrites;
     public int timeCheckingArray;
     public int timeCheckingDuplicates;
+    public int timeSwapping;
+    public int timeGettingBytes;
+    public int timeFlushing;
 
     public Statistics() {
         time = 0;
@@ -19,6 +22,9 @@ public class Statistics {
         diskWrites = 0;
         timeCheckingArray = 0;
         timeCheckingDuplicates = 0;
+        timeSwapping = 0;
+        timeGettingBytes = 0;
+        timeFlushing = 0;
     }
 
 
@@ -57,6 +63,9 @@ public class Statistics {
         writer2.write("Runtime: " + time + " ms");
         System.out.println("Time checking array:" + timeCheckingArray + " milliseconds");
         System.out.println("Time checking duplicates:" + timeCheckingDuplicates + " milliseconds");
+        System.out.println("Time swapping:" + timeSwapping + " milliseconds");
+        System.out.println("Time getting bytes:" + timeGettingBytes + " milliseconds");
+        System.out.println("Time flushing:" + timeFlushing + " milliseconds");
         writer2.close();
     }
 
