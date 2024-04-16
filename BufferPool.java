@@ -12,7 +12,8 @@ public class BufferPool {
     private int[] indexes;
     private Statistics stats;
 
-    public BufferPool(int numBuffers, File f, Statistics statistics) throws IOException {
+    public BufferPool(int numBuffers, File f, Statistics statistics)
+        throws IOException {
         totalNumBuffers = numBuffers;
         buffers = new Buffer[totalNumBuffers];
         file = new RandomAccessFile(f, "rw");
@@ -68,7 +69,7 @@ public class BufferPool {
 
     public byte[] getByte(int index) throws IOException {
         int position = checkIfIndexIsInBuffers(index);
-        if (position == -1) {//here
+        if (position == -1) {// here
             byte[] b = getBytesFromFile(index);
             addIndexAndBytesToFront(index, b);
             return b;
@@ -191,6 +192,7 @@ public class BufferPool {
 
 
     public void flush() throws IOException {
+        long startTime = System.nanoTime(); // Get start time in nanoseconds
 
         for (int i = 0; i < totalNumBuffers; i++) {
             if (buffers[i].isDirty()) {
@@ -206,5 +208,11 @@ public class BufferPool {
             }
             buffers[i].setClean();
         }
+
+        long endTime = System.nanoTime(); // Get end time in nanoseconds
+        long elapsedTime = endTime - startTime; // Calculate elapsed time in nanoseconds
+        double milliseconds = (double) elapsedTime / 1_000_000.0; // Convert nanoseconds to milliseconds
+        System.out.println("Flush time: " + milliseconds + " milliseconds");
     }
+
 }

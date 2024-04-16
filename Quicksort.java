@@ -1,3 +1,4 @@
+
 /**
  * {Project Description Here}
  */
@@ -36,19 +37,21 @@ public class Quicksort {
 
     /**
      * @param args
-     *      Command line parameters.  See the project spec!!!
-     * @throws IOException 
+     *            Command line parameters. See the project spec!!!
+     * @throws IOException
      */
     public static void main(String[] args) throws IOException {
         if (args.length != 3) {
-            System.err.println("Usage: java Quicksort <data-file-name> <numb-buffers> <stat-file-name>");
+            System.err.println(
+                "Usage: java Quicksort <data-file-name> <numb-buffers> <stat-file-name>");
             return;
         }
         String dataFileName = args[0];
         int numBuffers;
         try {
             numBuffers = Integer.parseInt(args[1]);
-        } catch (NumberFormatException e) {
+        }
+        catch (NumberFormatException e) {
             System.err.println("Error: Invalid number of buffers.");
             return;
         }

@@ -59,8 +59,6 @@ public class Buffer {
     }
 
 
-
-
     public void setBytes(byte[] newBytes, int offset) {
         System.arraycopy(newBytes, 0, bytes, offset, newBytes.length);
     }
