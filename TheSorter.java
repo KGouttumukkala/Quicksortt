@@ -27,9 +27,7 @@ public class TheSorter {
     private void quickSortRecursive(int low, int high) throws IOException {
         if (low < high) {
             boolean allRepeats = true;
-            short pivotValue = getShortValue(low); // Get the pivot value
-
-            // Check if all elements in the partition are equal to the pivot
+            short pivotValue = getShortValue(low);
             for (int i = low + 1; i <= high; i++) {
                 if (getShortValue(i) != pivotValue) {
                     allRepeats = false;
@@ -46,20 +44,12 @@ public class TheSorter {
     }
 
 
-
     private int partition(int low, int high) throws IOException {
-        // Choose a pivot (e.g., median of three, random, etc.)
-        short pivot = medianOfThree(low, high);
-
-        // Partitioning logic using the buffer pool
+        short pivot = getShortValue(high);
         int i = low - 1;
-        
+
         for (int j = low; j <= high - 1; j++) {
-
-            // If current element is smaller than the pivot
             if (getShortValue(j) < pivot) {
-
-                // Increment index of smaller element
                 i++;
                 bufferPool.swap(i, j);
             }
@@ -68,10 +58,10 @@ public class TheSorter {
         return (i + 1);
     }
 
-    
+
     private short medianOfThree(int low, int high) throws IOException {
         int mid = low + (high - low) / 2;
-        short lowValue = getShortValue(low);    
+        short lowValue = getShortValue(low);
         short midValue = getShortValue(mid);
         short highValue = getShortValue(high);
         if (lowValue > midValue) {
