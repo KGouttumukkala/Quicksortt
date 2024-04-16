@@ -18,7 +18,6 @@ public class BufferPool {
         indexes = new int[numBuffers * 1024];
         bufferQueue = new LinkedList<>();
         populateBuffers();
-        printBuffers();
     }
     
     private void populateBuffers() throws IOException {
@@ -42,12 +41,12 @@ public class BufferPool {
         return bytes;
     }
     
-    private int getBufferNumberFromIndex(int index) {
-        return index / 1024;
+    private int getBufferNumberFromPosition(int position) {
+        return position / 1024;
     }
     
-    private int getBufferByteOffsetFromIndex(int index) {
-        return (index % 1024) * 4; // Assuming each record is 4 bytes
+    private int getBufferByteOffsetFromPosition(int position) {
+        return (position % 1024) * 4; // Assuming each record is 4 bytes
     }
     
     private int getFileByteNumberFromIndex(int index) {
@@ -66,18 +65,28 @@ public class BufferPool {
             return b;
         }
         else {
-            int bufferNum = getBufferNumberFromIndex(index);
-            int bufferPosition = getBufferByteOffsetFromIndex(index);
+            int bufferNum = getBufferNumberFromPosition(position);
+            int bufferPosition = getBufferByteOffsetFromPosition(position);
             byte[] b = buffers[bufferNum].getBytes(bufferPosition);
             moveIndexAndBytesToFront(position, bufferNum, index, bufferPosition);
             return b;
         }
     }
     
-    private void addIndexAndBytesToFront(int index, byte[] b) {
+    private void addIndexAndBytesToFront(int index, byte[] b) throws IOException {
         int bufferNum = bufferQueue.poll();
         bufferQueue.offer(bufferNum);
-        buffers[bufferNum].addBytesToFront(b);
+        byte[] bytesToCommit = buffers[bufferNum].addBytesToFront(b);
+        int indexToCommit = indexes[bufferNum * 1024 + 1023];
+        int startingPos = bufferNum * 1024 + 1023;
+        int endingPos = bufferNum * 1024;
+        for (int i = startingPos; i > endingPos; i--) {
+            indexes[i] = indexes[i - 1];
+        }
+        indexes[endingPos] = index;
+        int byteNumberToCommit = getFileByteNumberFromIndex(indexToCommit);
+        file.seek(byteNumberToCommit);
+        file.write(bytesToCommit);
     }
     
     private void moveIndexAndBytesToFront(int position, int bufferNum, int index, int bufferPosition) {
@@ -94,15 +103,40 @@ public class BufferPool {
     
     private byte[] getBytesFromFile(int index) throws IOException {
         byte[] bytes = new byte[4]; // Assuming each buffer can hold 4096 bytes
-        long bytePosition = (long) index * bytes.length;
+        long bytePosition = getFileByteNumberFromIndex(index);
         file.seek(bytePosition);
         file.read(bytes);
         return bytes;
     }
     
 
-    public void swap(int i, int j) {
-        // TODO Auto-generated method stub
+    public void swap(int i, int j) throws IOException {
+        int positionI = checkIfIndexIsInBuffers(i);
+        int positionJ = checkIfIndexIsInBuffers(j);
+        if (positionI == -1) {
+            byte[] b = getBytesFromFile(i);
+            addIndexAndBytesToFront(i, b);
+        }
+        if (positionJ == -1) {
+            byte[] b = getBytesFromFile(j);
+            addIndexAndBytesToFront(j, b);
+        }
+        if (positionI == -1 || positionJ == -1) {
+            positionI = checkIfIndexIsInBuffers(i);
+            positionJ = checkIfIndexIsInBuffers(j);
+        }
+        
+        int bufferNumI = getBufferNumberFromPosition(positionI);
+        int bufferOffsetI = getBufferByteOffsetFromPosition(positionI);
+        byte[] byteI = buffers[bufferNumI].getBytes(bufferOffsetI);
+        int bufferNumJ = getBufferNumberFromPosition(positionJ);
+        int bufferOffsetJ = getBufferByteOffsetFromPosition(positionJ);
+        byte[] byteJ = buffers[bufferNumJ].getBytes(bufferOffsetJ);
+        
+        buffers[bufferNumI].setBytes(byteJ, bufferOffsetI);
+        buffers[bufferNumJ].setBytes(byteI, bufferOffsetJ);
+        buffers[bufferNumI].setDirty();
+        buffers[bufferNumJ].setDirty();
     }
     
     private int checkIfIndexIsInBuffers(int index) {
@@ -130,5 +164,22 @@ public class BufferPool {
             System.out.print(index + " ");
         }
         System.out.println("\n----------");
+    }
+    
+    public void flush() throws IOException {
+        printBuffers();
+        for (int i = 0; i < totalNumBuffers; i++) {
+            if (buffers[i].isDirty()) {
+                for (int j = i * 1024; j < (i + 1) * 1024; j++) {
+                    int index = indexes[j];
+                    int position = getBufferByteOffsetFromPosition(j);
+                    byte[] b = buffers[i].getBytes(position);
+                    int filePosition = getFileByteNumberFromIndex(index);
+                    file.seek(filePosition);
+                    file.write(b);
+                }
+            }
+            buffers[i].setClean();
+        }
     }
 }

@@ -2,7 +2,6 @@ import java.util.Arrays;
 
 public class Buffer{
     
-    private int index;
     private boolean isDirty;
     private byte[] bytes;
     
@@ -29,14 +28,6 @@ public class Buffer{
     
     public void setClean() {
         isDirty = false;
-    }
-    
-    public int getIndex() {
-        return index;
-    }
-    
-    public void changeIndex(int i) {
-        index = i;
     }
     
     public byte[] getBytes() {
@@ -69,6 +60,10 @@ public class Buffer{
         System.arraycopy(bytes, newBytes.length, bytes, 0, bytes.length - newBytes.length); // Shift existing bytes
         System.arraycopy(newBytes, 0, bytes, bytes.length - newBytes.length, newBytes.length); // Add new bytes to the front
         return removedBytes; // Return the removed bytes
+    }
+    
+    public void setBytes(byte[] newBytes, int offset) {
+        System.arraycopy(newBytes, 0, bytes, offset, newBytes.length);
     }
 
 }

@@ -15,20 +15,33 @@ public class TheSorter {
         this.bufferPool = new BufferPool(numBuffers, file);
     }
 
+
     public void quickSort() throws IOException {
         int low = 0;
         int high = numRecords - 1;
         quickSortRecursive(low, high);
-//        bufferPool.flush();
+        bufferPool.flush();
     }
+
 
     private void quickSortRecursive(int low, int high) throws IOException {
         if (low < high) {
-            int pivotIndex = partition(low, high);
-            quickSortRecursive(low, pivotIndex - 1);
-            quickSortRecursive(pivotIndex + 1, high);
+            boolean allRepeats = true;
+            for (int i = low; i <= high; i++) {
+                if (getShortValue(i) != getShortValue(low)) {
+                    allRepeats = false;
+                    break;
+                }
+            }
+
+            if (!allRepeats) {
+                int pivotIndex = partition(low, high);
+                quickSortRecursive(low, pivotIndex - 1);
+                quickSortRecursive(pivotIndex + 1, high);
+            }
         }
     }
+
 
     private int partition(int low, int high) throws IOException {
         // Choose a pivot (e.g., median of three, random, etc.)
@@ -40,11 +53,13 @@ public class TheSorter {
         while (true) {
             do {
                 i++;
-            } while (getShortValue(i) < pivot);
+            }
+            while (getShortValue(i) < pivot);
 
             do {
                 j--;
-            } while (getShortValue(j) > pivot);
+            }
+            while (getShortValue(j) > pivot);
 
             if (i >= j) {
                 return j;
@@ -63,21 +78,27 @@ public class TheSorter {
         if (lowValue > midValue) {
             if (midValue > highValue) {
                 return midValue;
-            } else if (lowValue > highValue) {
+            }
+            else if (lowValue > highValue) {
                 return highValue;
-            } else {
+            }
+            else {
                 return lowValue;
             }
-        } else {
+        }
+        else {
             if (lowValue > highValue) {
                 return lowValue;
-            } else if (midValue > highValue) {
+            }
+            else if (midValue > highValue) {
                 return highValue;
-            } else {
+            }
+            else {
                 return midValue;
             }
         }
     }
+
 
     private short getShortValue(int index) throws IOException {
         byte[] bytes = bufferPool.getByte(index);
