@@ -27,25 +27,34 @@ public class TheSorter {
     private void quickSortRecursive(int low, int high) throws IOException {
         if (low < high) {
             boolean allRepeats = true;
-            for (int i = low; i <= high; i++) {
-                if (getShortValue(i) != getShortValue(low)) {
+            short pivotValue = getShortValue(low); // Get the pivot value
+
+            // Check if all elements in the partition are equal to the pivot
+            for (int i = low + 1; i <= high; i++) {
+                if (getShortValue(i) != pivotValue) {
                     allRepeats = false;
                     break;
                 }
             }
 
             if (!allRepeats) {
+                System.out.println("Before partition - low: " + low + ", high: " + high);
                 int pivotIndex = partition(low, high);
                 quickSortRecursive(low, pivotIndex - 1);
                 quickSortRecursive(pivotIndex + 1, high);
+            }
+            else {
+                System.out.println("Repeats");
             }
         }
     }
 
 
+
     private int partition(int low, int high) throws IOException {
         // Choose a pivot (e.g., median of three, random, etc.)
         short pivot = medianOfThree(low, high);
+        System.out.println("Selected pivot: " + pivot);
 
         // Partitioning logic using the buffer pool
         int i = low - 1;
@@ -66,15 +75,15 @@ public class TheSorter {
             }
             bufferPool.swap(i, j);
         }
+        
     }
 
-
+    
     private short medianOfThree(int low, int high) throws IOException {
         int mid = low + (high - low) / 2;
-        short lowValue = getShortValue(low);
+        short lowValue = getShortValue(low);    
         short midValue = getShortValue(mid);
         short highValue = getShortValue(high);
-
         if (lowValue > midValue) {
             if (midValue > highValue) {
                 return midValue;
@@ -104,5 +113,11 @@ public class TheSorter {
         byte[] bytes = bufferPool.getByte(index);
         ByteBuffer buffer = ByteBuffer.wrap(bytes);
         return buffer.getShort();
+    }
+    
+    private char getSecondShortValue(int index) throws IOException {
+        byte[] bytes = bufferPool.getByte(index);
+        ByteBuffer buffer = ByteBuffer.wrap(bytes, Short.BYTES, Short.BYTES); // Offset to read the second short value
+        return (char) buffer.getShort();
     }
 }

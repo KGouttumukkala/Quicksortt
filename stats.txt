@@ -186,4 +186,68 @@ Runtime: 46 msFilename: input.txt
 Cache Hits: 0
 Disk Reads: 0
 Disk Writes: 0
-Runtime: 38 ms
+Runtime: 38 msFilename: checkme.txt
+Cache Hits: 0
+Disk Reads: 0
+Disk Writes: 0
+Runtime: 50 msFilename: input.txt
+Cache Hits: 0
+Disk Reads: 0
+Disk Writes: 0
+Runtime: 45 msFilename: checkme.txt
+Cache Hits: 0
+Disk Reads: 0
+Disk Writes: 0
+Runtime: 53 msFilename: input.txt
+Cache Hits: 0
+Disk Reads: 0
+Disk Writes: 0
+Runtime: 42 msFilename: checkme.txt
+Cache Hits: 0
+Disk Reads: 0
+Disk Writes: 0
+Runtime: 51 msFilename: input.txt
+Cache Hits: 0
+Disk Reads: 0
+Disk Writes: 0
+Runtime: 44 msFilename: checkme.txt
+Cache Hits: 0
+Disk Reads: 0
+Disk Writes: 0
+Runtime: 45 msFilename: input.txt
+Cache Hits: 0
+Disk Reads: 0
+Disk Writes: 0
+Runtime: 44 msFilename: checkme.txt
+Cache Hits: 0
+Disk Reads: 0
+Disk Writes: 0
+Runtime: 42 msFilename: checkme.txt
+Cache Hits: 0
+Disk Reads: 0
+Disk Writes: 0
+Runtime: 56 msFilename: checkme.txt
+Cache Hits: 0
+Disk Reads: 0
+Disk Writes: 0
+Runtime: 56 msFilename: checkme.txt
+Cache Hits: 0
+Disk Reads: 0
+Disk Writes: 0
+Runtime: 56 msFilename: checkme.txt
+Cache Hits: 0
+Disk Reads: 0
+Disk Writes: 0
+Runtime: 48 msFilename: checkme.txt
+Cache Hits: 0
+Disk Reads: 0
+Disk Writes: 0
+Runtime: 59 msFilename: checkme.txt
+Cache Hits: 0
+Disk Reads: 0
+Disk Writes: 0
+Runtime: 50 msFilename: checkme.txt
+Cache Hits: 0
+Disk Reads: 0
+Disk Writes: 0
+Runtime: 51 ms
