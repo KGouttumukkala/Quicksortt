@@ -10,14 +10,6 @@ public class Buffer{
         bytes = array;
     }
     
-    public Buffer copy() {
-        Buffer copy = new Buffer(this.bytes);
-        if (isDirty()) {
-            copy.setDirty();
-        }
-        return copy;
-    }
-    
     public boolean isDirty() {
         return isDirty;
     }
@@ -34,9 +26,6 @@ public class Buffer{
         return bytes;
     }
     
-    public void changeBytes(byte[] toChange) {
-        bytes = toChange;
-    }
     
     public int getSizeOfBuffer() {
         return bytes.length;

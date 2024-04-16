@@ -38,13 +38,9 @@ public class TheSorter {
             }
 
             if (!allRepeats) {
-                System.out.println("Before partition - low: " + low + ", high: " + high);
                 int pivotIndex = partition(low, high);
                 quickSortRecursive(low, pivotIndex - 1);
                 quickSortRecursive(pivotIndex + 1, high);
-            }
-            else {
-                System.out.println("Repeats");
             }
         }
     }
@@ -54,28 +50,22 @@ public class TheSorter {
     private int partition(int low, int high) throws IOException {
         // Choose a pivot (e.g., median of three, random, etc.)
         short pivot = medianOfThree(low, high);
-        System.out.println("Selected pivot: " + pivot);
 
         // Partitioning logic using the buffer pool
         int i = low - 1;
-        int j = high + 1;
-        while (true) {
-            do {
-                i++;
-            }
-            while (getShortValue(i) < pivot);
-
-            do {
-                j--;
-            }
-            while (getShortValue(j) > pivot);
-
-            if (i >= j) {
-                return j;
-            }
-            bufferPool.swap(i, j);
-        }
         
+        for (int j = low; j <= high - 1; j++) {
+
+            // If current element is smaller than the pivot
+            if (getShortValue(j) < pivot) {
+
+                // Increment index of smaller element
+                i++;
+                bufferPool.swap(i, j);
+            }
+        }
+        bufferPool.swap(i + 1, high);
+        return (i + 1);
     }
 
     
@@ -113,11 +103,5 @@ public class TheSorter {
         byte[] bytes = bufferPool.getByte(index);
         ByteBuffer buffer = ByteBuffer.wrap(bytes);
         return buffer.getShort();
-    }
-    
-    private char getSecondShortValue(int index) throws IOException {
-        byte[] bytes = bufferPool.getByte(index);
-        ByteBuffer buffer = ByteBuffer.wrap(bytes, Short.BYTES, Short.BYTES); // Offset to read the second short value
-        return (char) buffer.getShort();
     }
 }

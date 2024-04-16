@@ -250,4 +250,16 @@ Runtime: 50 msFilename: checkme.txt
 Cache Hits: 0
 Disk Reads: 0
 Disk Writes: 0
-Runtime: 51 ms
+Runtime: 51 msFilename: checkme.txt
+Cache Hits: 0
+Disk Reads: 0
+Disk Writes: 0
+Runtime: 48 msFilename: checkme.txt
+Cache Hits: 0
+Disk Reads: 0
+Disk Writes: 0
+Runtime: 46 msFilename: checkme.txt
+Cache Hits: 0
+Disk Reads: 0
+Disk Writes: 0
+Runtime: 50 ms
